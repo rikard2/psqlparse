@@ -12,6 +12,7 @@ def get_node_class(class_name):
 
 
 def build_from_obj(obj):
+    print('build_from_obj', obj)
     if isinstance(obj, list):
         return [build_from_obj(item) for item in obj]
     if not isinstance(obj, dict):
