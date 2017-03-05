@@ -1,9 +1,11 @@
 import psqlparse
 import pprint
 import json
+import prettify
+import os
 
 output = {}
-sql = open('create_function.sql', 'r').read()
+sql = open('/Users/rikard.javelind/git/trustly/schema/public/FUNCTIONS/deposit.sql', 'r').read()
 statements = psqlparse.parse(sql)
 
 def get_str(str):
@@ -29,8 +31,10 @@ def parse_statement(t, statement):
         return_type = names[index]['String']['str']
 
         if def_language == 'plpgsql':
-            parsed = psqlparse.parse_plpgsql('CREATE OR REPLACE FUNCTION cs_fmt_browser_version(v_name varchar, v_version varchar) RETURNS void AS $$ ' + def_as + ' $$');
-            print json.dumps(parsed, indent=2)
+            x = 'CREATE OR REPLACE FUNCTION Deposit(OUT Url text, OUT OrderID bigint, _UserName text, _NotificationURL text, _EndUserID text, _MessageID text, _Attributes text) RETURNS record LANGUAGE plpgsql AS $$DECLARE _UserName text;_NotificationURL text;_EndUserID text;_MessageID text;_Attributes text;' + def_as + ' $$'
+            #parsed = psqlparse.parse_plpgsql(x);
+            print x
+            #print json.dumps(parsed, indent=2)
         return {
             'type': t,
             'function_name': function_name,
@@ -40,26 +44,7 @@ def parse_statement(t, statement):
             'as': def_as
         }
     return statement
-
-def prettify(statements):
-    t = type(statements)
-
-    if t == type([]):
-        output = []
-        for s in statements:
-            keys = s.keys()
-            for k in keys:
-                output.append(parse_statement(k, s[k]))
-        return output
-    elif t == type({}):
-        output = {}
-        keys = statements.keys()
-        for key in keys:
-            output[key] = prettify(statements[key])
-        return output
-
-    return 'BOOM'
-
-print '---JSON---'
-print json.dumps(prettify(statements), indent=2)
-#print json.dumps(statements)
+#print json.dumps(prettify2(statements), indent=2)
+os.system('clear')
+print json.dumps(prettify.prettify(statements), indent=2)
+#print json.dumps(statements, indent=2)
